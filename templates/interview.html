@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Interview | AI Interview Coach</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1><i class="fas fa-robot"></i> AI Interview Coach</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/resume">Resume Analysis</a></li>
+                <li><a href="/interview" class="active">Mock Interview</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/api-status">API Status</a></li>
+                <li><a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h2>Mock Interview</h2>
+            <p>Practice answering interview questions and get AI feedback</p>
+        </section>
+
+        <section id="interviewSetup" class="interview-setup">
+            <form id="setupForm">
+                <div class="form-group">
+                    <label for="interviewJobRole">Target Job Role:</label>
+                    <select id="interviewJobRole" name="job_role" required>
+                        <option value="General">General</option>
+                        <option value="Software Developer">Software Developer</option>
+                        <option value="Data Scientist">Data Scientist</option>
+                        <option value="Project Manager">Project Manager</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Start Interview
+                </button>
+            </form>
+        </section>
+
+        <section id="interviewSession" class="interview-session hidden">
+            <div class="question-container">
+                <div class="question-counter">
+                    Question <span id="currentQuestionNum">1</span> of <span id="totalQuestions">5</span>
+                </div>
+                <div class="question">
+                    <h3 id="currentQuestion"></h3>
+                </div>
+            </div>
+
+            <div class="answer-container">
+                <textarea id="answerInput" rows="10" placeholder="Type your answer here... Provide a detailed response including specific examples from your experience. For behavioral questions, consider using the STAR method (Situation, Task, Action, Result)."></textarea>
+                <div class="answer-controls">
+                    <button id="submitAnswer" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Answer
+                    </button>
+                </div>
+            </div>
+
+            <div id="loadingEvaluation" class="loading hidden">
+                <i class="fas fa-spinner fa-spin"></i> Evaluating your answer...
+            </div>
+
+            <div id="answerFeedback" class="feedback-container hidden">
+                <div class="feedback-header">
+                    <h3>AI Feedback</h3>
+                    <div class="score">
+                        <span id="answerScore">0</span><span>/100</span>
+                    </div>
+                </div>
+                <div class="feedback-content formatted-feedback" id="feedbackContent">
+                </div>
+                <div class="feedback-controls">
+                    <button id="nextQuestion" class="btn btn-secondary">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button id="finishInterview" class="btn btn-primary hidden">
+                        Finish Interview <i class="fas fa-check"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="interviewComplete" class="interview-complete hidden">
+            <div class="complete-header">
+                <h3><i class="fas fa-check-circle"></i> Interview Complete!</h3>
+            </div>
+            <div class="complete-summary">
+                <p>You've completed the mock interview. Here's your performance:</p>
+                <div class="average-score">
+                    <span>Average Score: </span>
+                    <span id="averageScore">0</span><span>/100</span>
+                </div>
+            </div>
+            <div class="complete-actions">
+                <a href="/dashboard" class="btn btn-primary">
+                    <i class="fas fa-chart-line"></i> View Dashboard
+                </a>
+                <button id="startNewInterview" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Start New Interview
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AI Interview Coach. All rights reserved.</p>
+    </footer>
+
+    <script src="../static/js/interview.js"></script>
+</body>
+</html>

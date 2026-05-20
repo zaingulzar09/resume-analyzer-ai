@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Coach - Your Path to Interview Success</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/landing.css">
+</head>
+<body class="landing-page">
+    <header>
+        <div class="logo">
+            <h1><i class="fas fa-robot"></i> AI Interview Coach</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#login" class="login-btn">Login</a></li>
+                <li><a href="#signup" class="btn btn-primary">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Master Your Interview Skills with AI</h2>
+                <p>Get personalized feedback on your resume and interview answers powered by artificial intelligence</p>
+                <div class="cta-buttons">
+                    <a href="#signup" class="btn btn-primary btn-large">
+                        <i class="fas fa-user-plus"></i> Get Started - It's Free
+                    </a>
+                    <a href="#features" class="btn btn-secondary btn-large">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="../static/img/interview-illustration.svg" alt="AI Interview Coach Illustration">
+            </div>
+        </section>
+
+        <section id="features" class="features-section">
+            <h2>Why Choose AI Interview Coach?</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Resume Analysis</h3>
+                    <p>Get AI feedback on your resume's ATS compatibility and content optimization</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Mock Interviews</h3>
+                    <p>Practice with job-specific questions and receive instant AI feedback</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Performance Tracking</h3>
+                    <p>Monitor your progress and improvement areas over time with detailed analytics</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Insights</h3>
+                    <p>Leverage advanced AI to identify strengths and areas for improvement</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works-section">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Create a Free Account</h3>
+                    <p>Sign up in seconds to access all features and track your progress</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Upload Your Resume</h3>
+                    <p>Get instant feedback on how to improve your resume for specific job roles</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Practice Interviews</h3>
+                    <p>Answer role-specific questions and receive detailed feedback</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Track Your Progress</h3>
+                    <p>Monitor your improvement and focus on areas that need attention</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="signup" class="auth-section">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-target="signup-form">Sign Up</button>
+                    <button class="auth-tab" data-target="login-form">Login</button>
+                </div>
+                <div id="signup-form" class="auth-form active">
+                    <h3>Create Your Account</h3>
+                    <form action="/signup" method="POST">
+                        <div class="form-group">
+                            <label for="signup-username">Username</label>
+                            <input type="text" id="signup-username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </form>
+                </div>
+                <div id="login-form" class="auth-form">
+                    <h3>Welcome Back</h3>
+                    <form action="/login" method="POST">
+                        <div class="form-group">
+                            <label for="login-username">Username</label>
+                            <input type="text" id="login-username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3><i class="fas fa-robot"></i> AI Interview Coach</h3>
+                <p>Your path to interview success</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#signup">Sign Up</a></li>
+                    <li><a href="#login">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 AI Interview Coach. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle auth tabs
+            const authTabs = document.querySelectorAll('.auth-tab');
+            const authForms = document.querySelectorAll('.auth-form');
+            
+            authTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    
+                    // Update active tab
+                    authTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target form
+                    authForms.forEach(form => {
+                        form.classList.remove('active');
+                        if (form.id === target) {
+                            form.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#login') {
+                        // Switch to login tab
+                        document.querySelector('.auth-tab[data-target="login-form"]').click();
+                        // Scroll to auth section
+                        document.querySelector('#signup').scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        document.querySelector(targetId).scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

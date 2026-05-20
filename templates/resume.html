@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis | AI Interview Coach</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        .optimize-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--medium-gray);
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .optimized-results {
+            margin-top: 1.5rem;
+        }
+        .optimized-text {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1><i class="fas fa-robot"></i> AI Interview Coach</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/resume" class="active">Resume Analysis</a></li>
+                <li><a href="/interview">Mock Interview</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/api-status">API Status</a></li>
+                <li><a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h2>Resume Analysis</h2>
+            <p>Upload your resume and get AI-powered feedback</p>
+        </section>
+
+        <div class="container mx-auto p-6 max-w-4xl">
+            <!-- Error Message -->
+            <div id="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 hidden" role="alert">
+                <strong class="font-bold">Error! </strong>
+                <span class="block sm:inline error-text">Something went wrong.</span>
+            </div>
+            
+            <section class="resume-upload">
+                <form id="resumeForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="jobRole">Target Job Role:</label>
+                        <select id="jobRole" name="job_role" required>
+                            <option value="General">General</option>
+                            <option value="Software Developer">Software Developer</option>
+                            <option value="Data Scientist">Data Scientist</option>
+                            <option value="Project Manager">Project Manager</option>
+                        </select>
+                    </div>
+                    <div class="form-group file-upload">
+                        <label for="resumeFile">Upload Resume (PDF or DOCX):</label>
+                        <input type="file" id="resumeFile" name="resume" accept=".pdf,.docx" required>
+                        <div class="file-upload-btn">
+                            <i class="fas fa-upload"></i> Choose File
+                        </div>
+                        <span class="file-name">No file chosen</span>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Analyze Resume
+                        </button>
+                        <button type="button" id="optimizeResumeBtn" class="btn btn-success" style="display: none;">
+                            <i class="fas fa-magic"></i> ✨ Optimize Resume with AI
+                        </button>
+                        <button type="button" id="downloadUpdatedResumeBtn" class="btn btn-secondary hidden" disabled>
+                            <i class="fas fa-file-download"></i> Download Updated Resume
+                        </button>
+                    </div>
+                </form>
+                <div id="loadingAnalysis" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Analyzing your resume...
+                </div>
+                <div id="loadingOptimize" class="loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i> AI is rewriting your resume... (takes 10-15 seconds)
+                </div>
+            </section>
+
+            <section id="analysisResults" class="analysis-results hidden">
+                <div class="result-header">
+                    <h3>Analysis Results</h3>
+                    <div class="score-container">
+                        <div class="score">
+                            <span id="resumeScore">0</span>
+                            <span class="max-score">/100</span>
+                        </div>
+                        <div class="score-label">ATS Compatibility Score</div>
+                    </div>
+                </div>
+                
+                <div class="results-grid">
+                    <div class="result-section">
+                        <div class="section-header">
+                            <i class="fas fa-file-alt"></i>
+                            <h4>Structure</h4>
+                        </div>
+                        <div class="section-content">
+                            <p id="structureFeedback"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="section-header">
+                            <i class="fas fa-list-ul"></i>
+                            <h4>Content</h4>
+                        </div>
+                        <div class="section-content">
+                            <p id="contentFeedback"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <div class="section-header">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Improvement Suggestions</h4>
+                        </div>
+                        <div class="section-content">
+                            <p id="improvementsFeedback"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="keywords-section">
+                    <div class="keyword-column">
+                        <div class="section-header">
+                            <i class="fas fa-check-circle"></i>
+                            <h4>Keywords Found</h4>
+                        </div>
+                        <ul id="keywordsFound" class="keywords-list found"></ul>
+                    </div>
+                    <div class="keyword-column">
+                        <div class="section-header">
+                            <i class="fas fa-times-circle"></i>
+                            <h4>Missing Keywords</h4>
+                        </div>
+                        <ul id="keywordsMissing" class="keywords-list missing"></ul>
+                    </div>
+                </div>
+                
+                <div class="result-summary">
+                    <div class="section-header">
+                        <i class="fas fa-star"></i>
+                        <h4>Summary</h4>
+                    </div>
+                    <div class="section-content">
+                        <p id="summaryFeedback"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Optimized Resume Section -->
+            <section id="optimizedResults" class="optimize-section hidden">
+                <div class="result-header">
+                    <h3><i class="fas fa-magic"></i> AI Optimized Resume</h3>
+                    <p>Your resume professionally rewritten by AI using STAR method and strong action verbs</p>
+                </div>
+                <div class="optimized-text" id="optimizedText">
+                    <!-- Optimized resume will appear here -->
+                </div>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                    <button id="copyOptimizedBtn" class="btn btn-primary btn-sm">
+                        <i class="fas fa-copy"></i> Copy to Clipboard
+                    </button>
+                    <button id="downloadOptimizedBtn" class="btn btn-success btn-sm">
+                        <i class="fas fa-download"></i> Download as TXT
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AI Interview Coach. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Store data
+        let currentFile = null;
+        let currentJobRole = 'General';
+        let analysisComplete = false;
+
+        // File upload display
+        const fileInput = document.getElementById('resumeFile');
+        const fileNameSpan = document.querySelector('.file-name');
+        
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                currentFile = e.target.files[0];
+                fileNameSpan.textContent = currentFile.name;
+            } else {
+                currentFile = null;
+                fileNameSpan.textContent = 'No file chosen';
+            }
+        });
+
+        // Form submission for analysis
+        const resumeForm = document.getElementById('resumeForm');
+        resumeForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentFile) {
+                showError('Please select a file');
+                return;
+            }
+            
+            const jobRoleSelect = document.getElementById('jobRole');
+            currentJobRole = jobRoleSelect.value;
+            
+            const formData = new FormData();
+            formData.append('resume', currentFile);
+            formData.append('job_role', currentJobRole);
+            
+            const loadingDiv = document.getElementById('loadingAnalysis');
+            loadingDiv.style.display = 'block';
+            hideError();
+            
+            try {
+                const response = await fetch('/api/analyze-resume', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayResults(data);
+                    analysisComplete = true;
+                    const optimizeBtn = document.getElementById('optimizeResumeBtn');
+                    optimizeBtn.style.display = 'inline-block';
+                } else {
+                    showError(data.error || 'Analysis failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+        
+        // Optimize Resume Function
+        const optimizeBtn = document.getElementById('optimizeResumeBtn');
+        optimizeBtn.addEventListener('click', async function() {
+            if (!currentFile) {
+                showError('Please upload a resume first');
+                return;
+            }
+            
+            const loadingOptimize = document.getElementById('loadingOptimize');
+            loadingOptimize.style.display = 'block';
+            
+            try {
+                // First, extract text from the file
+                const formData = new FormData();
+                formData.append('resume', currentFile);
+                
+                const extractResponse = await fetch('/api/extract-resume-text', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!extractResponse.ok) {
+                    const errorData = await extractResponse.json();
+                    throw new Error(errorData.error || 'Text extraction failed');
+                }
+                
+                const textData = await extractResponse.json();
+                const resumeText = textData.text;
+                
+                if (!resumeText || resumeText.length < 50) {
+                    throw new Error('Could not extract enough text from the resume');
+                }
+                
+                // Now optimize
+                const optimizeResponse = await fetch('/api/optimize-resume', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        resume_text: resumeText,
+                        job_role: currentJobRole
+                    })
+                });
+                
+                const data = await optimizeResponse.json();
+                
+                if (optimizeResponse.ok) {
+                    displayOptimizedResults(data.optimized_text);
+                } else {
+                    showError(data.error || 'Optimization failed');
+                }
+            } catch (error) {
+                showError('Optimization error: ' + error.message);
+            } finally {
+                loadingOptimize.style.display = 'none';
+            }
+        });
+        
+        function displayOptimizedResults(optimizedText) {
+            const optimizedDiv = document.getElementById('optimizedText');
+            optimizedDiv.textContent = optimizedText;
+            
+            const optimizedSection = document.getElementById('optimizedResults');
+            optimizedSection.classList.remove('hidden');
+            
+            // Scroll to optimized section
+            optimizedSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Copy button
+            const copyBtn = document.getElementById('copyOptimizedBtn');
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(optimizedText);
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+            };
+            
+            // Download button
+            const downloadBtn = document.getElementById('downloadOptimizedBtn');
+            downloadBtn.onclick = () => {
+                const blob = new Blob([optimizedText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'optimized_resume.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+        }
+        
+        function displayResults(data) {
+            const resultsSection = document.getElementById('analysisResults');
+            resultsSection.classList.remove('hidden');
+            
+            // Score
+            const scoreSpan = document.getElementById('resumeScore');
+            scoreSpan.textContent = data.score || 'N/A';
+            
+            // Feedback sections
+            if (data.feedback) {
+                const structureP = document.getElementById('structureFeedback');
+                structureP.innerHTML = formatText(data.feedback.structure || 'No structure feedback');
+                
+                const contentP = document.getElementById('contentFeedback');
+                contentP.innerHTML = formatText(data.feedback.content || 'No content feedback');
+                
+                const improvementsP = document.getElementById('improvementsFeedback');
+                improvementsP.innerHTML = formatText(data.feedback.improvements || 'No improvement suggestions');
+                
+                const summaryP = document.getElementById('summaryFeedback');
+                summaryP.innerHTML = formatText(data.feedback.summary || 'No summary');
+            }
+            
+            // Keywords Found
+            const foundList = document.getElementById('keywordsFound');
+            if (data.keywords_found && data.keywords_found.length > 0) {
+                foundList.innerHTML = data.keywords_found.map(k => `<li><i class="fas fa-check"></i> ${k}</li>`).join('');
+            } else {
+                foundList.innerHTML = '<li>No keywords found</li>';
+            }
+            
+            // Keywords Missing
+            const missingList = document.getElementById('keywordsMissing');
+            if (data.keywords_missing && data.keywords_missing.length > 0) {
+                missingList.innerHTML = data.keywords_missing.map(k => `<li><i class="fas fa-times"></i> ${k}</li>`).join('');
+            } else {
+                missingList.innerHTML = '<li>No missing keywords! Great job!</li>';
+            }
+        }
+        
+        function formatText(text) {
+            if (!text) return '';
+            return text.replace(/\n/g, '<br>').replace(/- /g, '• ');
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const errorSpan = errorDiv.querySelector('.error-text');
+            errorSpan.textContent = message;
+            errorDiv.classList.remove('hidden');
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+        
+        function hideError() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

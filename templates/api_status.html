@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Status | AI Interview Coach</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        .api-status-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        .status-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+        }
+        
+        .status-icon.success {
+            color: var(--success-color);
+        }
+        
+        .status-icon.error {
+            color: var(--error-color);
+        }
+        
+        .status-details {
+            margin-top: 1.5rem;
+        }
+        
+        .action-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .setup-instructions {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+        }
+        
+        .setup-instructions h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .setup-instructions ol {
+            padding-left: 1.5rem;
+        }
+        
+        .setup-instructions li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .code-block {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1><i class="fas fa-robot"></i> AI Interview Coach</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/home">Home</a></li>
+                <li><a href="/resume">Resume Analysis</a></li>
+                <li><a href="/interview">Mock Interview</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/api-status" class="active">API Status</a></li>
+                <li><a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h2>AI Provider API Status</h2>
+            <p>Check the status of your AI provider integration (Groq/OpenAI/Gemini)</p>
+        </section>
+
+        <section class="api-status-container">
+            <div class="status-header">
+                {% if status == "working" %}
+                    <div class="status-icon success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>✅ API Integration is WORKING!</h3>
+                {% elif status == "warning" %}
+                    <div class="status-icon error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>⚠️ API Integration Warning</h3>
+                {% else %}
+                    <div class="status-icon error">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h3>❌ API Integration Error</h3>
+                {% endif %}
+            </div>
+
+            <div class="status-message">
+                <p><strong>{{ message }}</strong></p>
+            </div>
+
+            <div class="status-details">
+                {% if status == "working" %}
+                    <p>Your AI Interview Coach application is successfully connected to the AI provider. You will receive AI-powered feedback for resume analysis and interview answers.</p>
+                {% elif status == "warning" %}
+                    <p>Your API key is configured, but API requests are currently blocked by quota or rate limits. The app is still functional and is using basic, non-AI evaluation for resume analysis and interview practice.</p>
+                {% else %}
+                    <p>There is an issue with your API integration. Currently, the application is using basic evaluation methods without AI. To enable AI-powered feedback, please fix the API key configuration.</p>
+                {% endif %}
+            </div>
+
+            <div class="action-buttons">
+                <a href="/api-status" class="btn btn-primary">
+                    <i class="fas fa-sync"></i> Refresh Status
+                </a>
+                <a href="/home" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Return to Home
+                </a>
+            </div>
+
+            {% if status != "working" %}
+                <div class="setup-instructions">
+                    <h3>🚀 How to Get a FREE API Key (No Credit Card Required)</h3>
+                    <ol>
+                        <li>Go to <a href="https://console.groq.com" target="_blank">console.groq.com</a> and sign up with Google/GitHub</li>
+                        <li>Navigate to <strong>API Keys</strong> in your dashboard</li>
+                        <li>Click <strong>Create API Key</strong> and copy your key (starts with <code>gsk_</code>)</li>
+                        <li>Create or edit the <code>.env</code> file in your application root directory</li>
+                        <li>Add your API key in the following format:</li>
+                    </ol>
+                    <div class="code-block">
+                        LLM_PROVIDER=groq<br>
+                        GROQ_API_KEY=gsk-your-api-key-here
+                    </div>
+                    <p><strong>Alternative providers:</strong> You can also use OpenAI (<code>OPENAI_API_KEY</code>) or Gemini (<code>GEMINI_API_KEY</code>) by changing <code>LLM_PROVIDER</code>.</p>
+                    <p>After updating the .env file, <strong>restart the application</strong> for changes to take effect.</p>
+                </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AI Interview Coach. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="600px" viewBox="0 0 800 600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Interview Illustration</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#4353FF" offset="0%"></stop>
+            <stop stop-color="#2E3C7E" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#F5F7FF" offset="0%"></stop>
+            <stop stop-color="#E8ECFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Interview-Illustration" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Background -->
+        <rect id="Background" fill="#F5F7FF" x="0" y="0" width="800" height="600" rx="20"></rect>
+        
+        <!-- Robot -->
+        <g id="Robot" transform="translate(480, 200)">
+            <rect id="Robot-Body" fill="url(#linearGradient-1)" x="0" y="80" width="220" height="240" rx="30"></rect>
+            <circle id="Robot-Head" fill="url(#linearGradient-1)" cx="110" cy="40" r="60"></circle>
+            <circle id="Robot-Eye-Left" fill="#FFFFFF" cx="80" cy="35" r="15"></circle>
+            <circle id="Robot-Eye-Right" fill="#FFFFFF" cx="140" cy="35" r="15"></circle>
+            <circle id="Robot-Pupil-Left" fill="#333333" cx="80" cy="35" r="7"></circle>
+            <circle id="Robot-Pupil-Right" fill="#333333" cx="140" cy="35" r="7"></circle>
+            <rect id="Robot-Mouth" fill="#FFFFFF" x="70" y="65" width="80" height="10" rx="5"></rect>
+            
+            <!-- Antenna -->
+            <rect id="Antenna-Base" fill="#4353FF" x="100" y="-30" width="20" height="30" rx="5"></rect>
+            <circle id="Antenna-Top" fill="#FF5757" cx="110" cy="-40" r="15"></circle>
+            
+            <!-- Buttons -->
+            <circle id="Button-1" fill="#FFFFFF" cx="70" cy="130" r="15"></circle>
+            <circle id="Button-2" fill="#FFFFFF" cx="110" cy="130" r="15"></circle>
+            <circle id="Button-3" fill="#FFFFFF" cx="150" cy="130" r="15"></circle>
+            
+            <!-- Screen -->
+            <rect id="Screen" fill="#E8ECFF" x="40" y="170" width="140" height="80" rx="10"></rect>
+            <line id="Line-1" x1="60" y1="190" x2="160" y2="190" stroke="#4353FF" stroke-width="5" stroke-linecap="round"></line>
+            <line id="Line-2" x1="60" y1="210" x2="140" y2="210" stroke="#4353FF" stroke-width="5" stroke-linecap="round"></line>
+            <line id="Line-3" x1="60" y1="230" x2="120" y2="230" stroke="#4353FF" stroke-width="5" stroke-linecap="round"></line>
+        </g>
+        
+        <!-- Person -->
+        <g id="Person" transform="translate(100, 180)">
+            <!-- Person Body -->
+            <rect id="Person-Body" fill="#2E3C7E" x="60" y="100" width="140" height="220" rx="20"></rect>
+            
+            <!-- Person Head -->
+            <circle id="Person-Head" fill="#FFD7B5" cx="130" cy="60" r="50"></circle>
+            
+            <!-- Person Hair -->
+            <path d="M130,10 C180,10 180,70 180,70 L80,70 C80,70 80,10 130,10 Z" id="Person-Hair" fill="#6D4534"></path>
+            
+            <!-- Person Face -->
+            <circle id="Person-Eye-Left" fill="#333333" cx="110" cy="50" r="5"></circle>
+            <circle id="Person-Eye-Right" fill="#333333" cx="150" cy="50" r="5"></circle>
+            <path d="M120,80 C120,80 130,90 140,80" id="Person-Mouth" stroke="#333333" stroke-width="3" stroke-linecap="round"></path>
+            
+            <!-- Person Arms -->
+            <rect id="Person-Arm-Left" fill="#2E3C7E" x="10" y="120" width="60" height="30" rx="15" transform="rotate(-30 10 120)"></rect>
+            <rect id="Person-Arm-Right" fill="#2E3C7E" x="190" y="120" width="60" height="30" rx="15" transform="rotate(30 190 120)"></rect>
+            
+            <!-- Speech Bubble -->
+            <path d="M230,80 L270,40 L360,40 C371.046,40 380,48.954 380,60 L380,120 C380,131.046 371.046,140 360,140 L240,140 C228.954,140 220,131.046 220,120 L220,60 C220,48.954 228.954,40 240,40 L230,80 Z" id="Speech-Bubble" fill="#FFFFFF" stroke="#4353FF" stroke-width="3"></path>
+            <line id="Bubble-Line-1" x1="240" y1="70" x2="360" y2="70" stroke="#4353FF" stroke-width="3" stroke-linecap="round"></line>
+            <line id="Bubble-Line-2" x1="240" y1="90" x2="340" y2="90" stroke="#4353FF" stroke-width="3" stroke-linecap="round"></line>
+            <line id="Bubble-Line-3" x1="240" y1="110" x2="320" y2="110" stroke="#4353FF" stroke-width="3" stroke-linecap="round"></line>
+        </g>
+    </g>
+</svg> 

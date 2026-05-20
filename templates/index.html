@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Coach</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1><i class="fas fa-robot"></i> AI Interview Coach</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/home" class="active">Home</a></li>
+                <li><a href="/resume">Resume Analysis</a></li>
+                <li><a href="/interview">Mock Interview</a></li>
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/api-status">API Status</a></li>
+                <li><a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Welcome, {{ current_user.username }}!</h2>
+                <p>Get AI-powered feedback on your resume and interview skills</p>
+                <div class="cta-buttons">
+                    <a href="/resume" class="btn btn-primary">
+                        <i class="fas fa-file-alt"></i> Analyze Resume
+                    </a>
+                    <a href="/interview" class="btn btn-secondary">
+                        <i class="fas fa-comments"></i> Start Mock Interview
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Resume Analysis</h3>
+                <p>Get AI feedback on your resume's ATS compatibility and content</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Mock Interviews</h3>
+                <p>Practice with job-specific questions and receive instant feedback</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Performance Tracking</h3>
+                <p>Monitor your progress and improvement areas over time</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 AI Interview Coach. All rights reserved.</p>
+    </footer>
+</body>
+</html>
