@@ -1,11 +1,12 @@
 import os
 import json
 import random
+import re
 from dotenv import load_dotenv, find_dotenv
 from utils.api_config import get_llm_provider
 from utils.openai_patch import patch_openai
 
-# Load environment variables from project root or fallback to static/.env
+# Load environment variables
 env_loaded = load_dotenv(find_dotenv())
 if not env_loaded:
     fallback_env = os.path.join(os.path.dirname(__file__), '..', 'static', '.env')
@@ -24,7 +25,7 @@ if provider:
 else:
     print("Interview module: Using basic evaluation (LLM provider not available)")
 
-# Pre-defined interview questions by job role
+# Pre-defined interview questions by job role (fallback)
 INTERVIEW_QUESTIONS = {
     "Software Developer": [
         "Tell me about a challenging programming problem you solved recently.",
@@ -79,36 +80,82 @@ INTERVIEW_QUESTIONS = {
 def get_interview_questions(job_role="General", count=5):
     """
     Get interview questions for a specific job role.
-    
-    Args:
-        job_role: Target job role
-        count: Number of questions to return
-        
-    Returns:
-        List of interview questions
+    Uses AI if available, falls back to pre-defined questions.
     """
+    # Try to generate AI questions if provider is available
+    if provider:
+        try:
+            ai_questions = generate_ai_questions(job_role, count)
+            if ai_questions and len(ai_questions) > 0:
+                return ai_questions
+        except Exception as e:
+            print(f"AI question generation failed: {e}")
+    
+    # Fallback to pre-defined questions
     questions = INTERVIEW_QUESTIONS.get(job_role, INTERVIEW_QUESTIONS["General"])
-    # Randomly select questions if more are available than requested
     if len(questions) > count:
         return random.sample(questions, count)
     return questions
 
+def generate_ai_questions(job_role, count):
+    """Generate interview questions using AI."""
+    prompt = f"""Generate {count} interview questions for a {job_role} position.
+
+The questions should:
+1. Be relevant to the {job_role} role
+2. Mix behavioral and technical questions
+3. Be challenging but fair
+
+Return ONLY a JSON array of strings, like this:
+["Question 1", "Question 2", "Question 3"]
+
+No explanations, just the JSON array."""
+
+    try:
+        print(f"🤖 Generating {count} AI questions for {job_role}...")
+        
+        response = provider.chat_completion(
+            messages=[
+                {"role": "system", "content": "You are an expert interviewer. Generate relevant questions."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.8,
+            max_tokens=500
+        )
+        
+        # Clean response
+        response = response.strip()
+        if response.startswith("```json"):
+            response = response[7:]
+        if response.startswith("```"):
+            response = response[3:]
+        if response.endswith("```"):
+            response = response[:-3]
+        response = response.strip()
+        
+        # Parse JSON array
+        json_match = re.search(r'\[[\s\S]*\]', response)
+        if json_match:
+            questions = json.loads(json_match.group())
+            if isinstance(questions, list) and len(questions) > 0:
+                print(f"✅ Generated {len(questions)} AI questions")
+                return questions[:count]
+        
+        return None
+        
+    except Exception as e:
+        print(f"❌ AI question generation failed: {e}")
+        return None
+
 def evaluate_answer(question, answer, job_role="General"):
     """
     Evaluate an interview answer using LLM provider.
-    
-    Args:
-        question: The interview question
-        answer: The user's answer
-        job_role: Target job role
-        
-    Returns:
-        Dictionary with evaluation results
     """
     if not answer or len(answer.strip()) < 10:
         return {
             "score": 0,
-            "feedback": "Your answer was too short to evaluate. Please provide a more detailed response."
+            "feedback": "Your answer was too short to evaluate. Please provide a more detailed response.",
+            "feedback_html": "<h4>Score: 0/100</h4><p>Your answer was too short to evaluate. Please provide a more detailed response.</p>"
         }
     
     if provider:
@@ -116,20 +163,16 @@ def evaluate_answer(question, answer, job_role="General"):
             return get_ai_answer_evaluation(question, answer, job_role)
         except Exception as e:
             print(f"AI evaluation failed: {e}")
-            # Fallback evaluation if AI fails
             return get_basic_evaluation(question, answer, job_role)
     else:
-        # Fallback evaluation if LLM provider is not available
         return get_basic_evaluation(question, answer, job_role)
 
 def get_basic_evaluation(question, answer, job_role):
     """Provide basic evaluation when AI is not available."""
     word_count = len(answer.split())
+    score = min(40 + (word_count * 2), 85)
     
-    # Basic scoring based on length and content
-    score = min(40 + (word_count * 2), 85)  # Base score with length bonus, capped at 85
-    
-    feedback = f"""
+    feedback_html = f"""
     <h4>Score: {score}/100</h4>
     
     <h4>Basic Analysis:</h4>
@@ -146,89 +189,83 @@ def get_basic_evaluation(question, answer, job_role):
         <li>Use specific examples from your experience</li>
         <li>Structure your answer with clear points</li>
         <li>Relate your response directly to the {job_role} role</li>
-        <li>Consider using the STAR method (Situation, Task, Action, Result) for behavioral questions</li>
+        <li>Consider using the STAR method (Situation, Task, Action, Result)</li>
     </ul>
-    
-    <p><strong>Note:</strong> This is a basic evaluation. For detailed AI-powered feedback, ensure your OpenAI API key is properly configured.</p>
     """
     
     return {
         "score": score,
-        "feedback": feedback.strip()
+        "feedback": feedback_html.strip()
     }
 
 def get_ai_answer_evaluation(question, answer, job_role):
-    """
-    Use OpenAI to evaluate interview answer.
-    """
-    if not client:
-        raise Exception("OpenAI client not available")
-    
-    prompt = f"""
-    Evaluate this interview answer for a {job_role} position:
-    
-    Question: {question}
-    
-    Answer: {answer}
-    
-    Please provide:
-    1. A score from 0-100
-    2. Detailed feedback on the strengths of the answer
-    3. Specific suggestions for improvement
-    4. How well the answer addresses the question
-    
-    Format your response as JSON with these keys: score, strengths, improvements, relevance
-    """
-    
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are an expert interview coach with HR experience."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.7,
-        max_tokens=800
-    )
-    
+    """Use AI to evaluate interview answer."""
+    prompt = f"""Evaluate this interview answer for a {job_role} position:
+
+Question: {question}
+
+Answer: {answer}
+
+Provide evaluation as JSON with these exact keys:
+- score (integer 0-100)
+- strengths (string with HTML bullet points)
+- improvements (string with HTML bullet points)
+- relevance (string with feedback)
+
+Return ONLY the JSON object, no other text."""
+
     try:
-        evaluation_text = response.choices[0].message.content
-        # Extract JSON from response
-        evaluation_text = evaluation_text.strip()
-        if evaluation_text.startswith("```json"):
-            evaluation_text = evaluation_text[7:-3]  # Remove ```json and ``` markers
-        elif evaluation_text.startswith("```"):
-            evaluation_text = evaluation_text[3:-3]  # Remove ``` markers
+        print(f"🤖 Evaluating answer for {job_role} position...")
+        
+        response = provider.chat_completion(
+            messages=[
+                {"role": "system", "content": "You are an expert interviewer. Provide constructive, honest feedback."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=600
+        )
+        
+        # Clean response
+        response = response.strip()
+        if response.startswith("```json"):
+            response = response[7:]
+        if response.startswith("```"):
+            response = response[3:]
+        if response.endswith("```"):
+            response = response[:-3]
+        response = response.strip()
+        
+        # Extract JSON
+        json_match = re.search(r'\{[\s\S]*\}', response)
+        if json_match:
+            evaluation = json.loads(json_match.group())
             
-        evaluation = json.loads(evaluation_text)
+            # Build HTML feedback
+            strengths_html = evaluation.get('strengths', 'Good attempt at answering the question.')
+            improvements_html = evaluation.get('improvements', 'Try to be more specific.')
+            
+            feedback_html = f"""
+            <h4>Score: {evaluation.get('score', 50)}/100</h4>
+            
+            <h4>Strengths:</h4>
+            <div>{strengths_html}</div>
+            
+            <h4>Areas for Improvement:</h4>
+            <div>{improvements_html}</div>
+            
+            <h4>Relevance to Question:</h4>
+            <p>{evaluation.get('relevance', 'Ensure your answer directly addresses all aspects of the question.')}</p>
+            """
+            
+            return {
+                "score": evaluation.get("score", 50),
+                "feedback": feedback_html.strip(),
+                "detailed": evaluation
+            }
         
-        # Convert strengths and improvements to HTML lists if they're in array format
-        strengths_html = evaluation.get('strengths', 'Good attempt at answering the question.')
-        if isinstance(strengths_html, list):
-            strengths_html = "<ul>" + "".join([f"<li>{item}</li>" for item in strengths_html]) + "</ul>"
+        return get_basic_evaluation(question, answer, job_role)
         
-        improvements_html = evaluation.get('improvements', 'Try to be more specific and provide concrete examples.')
-        if isinstance(improvements_html, list):
-            improvements_html = "<ul>" + "".join([f"<li>{item}</li>" for item in improvements_html]) + "</ul>"
-        
-        # Construct feedback message with HTML formatting
-        feedback = f"""
-        <h4>Score: {evaluation.get('score', 50)}/100</h4>
-        
-        <h4>Strengths:</h4>
-        <div>{strengths_html}</div>
-        
-        <h4>Areas for Improvement:</h4>
-        <div>{improvements_html}</div>
-        
-        <h4>Relevance to Question:</h4>
-        <p>{evaluation.get('relevance', 'Ensure your answer directly addresses all aspects of the question.')}</p>
-        """
-        
-        return {
-            "score": evaluation.get("score", 50),
-            "feedback": feedback.strip(),
-            "detailed": evaluation
-        }
     except Exception as e:
-        # If JSON parsing fails, fall back to basic evaluation
+        print(f"❌ AI evaluation failed: {e}")
         return get_basic_evaluation(question, answer, job_role)
